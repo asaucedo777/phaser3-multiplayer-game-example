@@ -6,7 +6,6 @@ const FullscreenButton = scene => {
     .setScrollFactor(0)
     .setDepth(100)
     .setAlpha(0.2)
-
   button.on('pointerup', () => {
     if (scene.scale.isFullscreen) {
       button.setFrame(0)
@@ -18,5 +17,4 @@ const FullscreenButton = scene => {
   })
   return button
 }
-
 export default FullscreenButton

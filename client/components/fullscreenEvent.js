@@ -1,4 +1,3 @@
-// listen for fullscreen change event
 const FullScreenEvent = callback => {
   const fullScreenChange = () => {
     let times = [50, 100, 200, 500, 1000, 2000, 5000]

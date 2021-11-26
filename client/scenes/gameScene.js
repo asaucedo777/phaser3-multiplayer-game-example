@@ -5,17 +5,24 @@ import Cursors from '../components/cursors'
 import Controls from '../components/controls'
 import FullscreenButton from '../components/fullscreenButton'
 
+const events = {
+  POINTERDOWN: 'pointerdown',
+  UPDATE_OBJECTS: 'updateObjects',
+  REMOVE_PLAYER: 'removePlayer',
+  GET_ID: 'getId',
+  ADD_DUMMY: 'addDummy',
+  ADD_PLAYER: 'addPlayer',
+}
+
 export default class GameScene extends Scene {
   constructor() {
     super({ key: 'GameScene' })
     this.objects = {}
     this.playerId
   }
-
   init({ channel }) {
     this.channel = channel
   }
-
   preload() {
     this.load.image('controls', 'assets/controls.png')
     this.load.spritesheet('fullscreen', 'assets/fullscreen.png', {
@@ -27,29 +34,27 @@ export default class GameScene extends Scene {
       frameHeight: 48
     })
   }
-
   async create() {
     new Cursors(this, this.channel)
     new Controls(this, this.channel)
-
     FullscreenButton(this)
-
     let addDummyDude = this.add
-      .text(this.cameras.main.width / 2, this.cameras.main.height / 2 - 100, 'CLICK ME', { fontSize: 48 })
+      .text(
+        this.cameras.main.width / 2, 
+        this.cameras.main.height / 2 - 100, 
+        'HAZ CLICK', 
+        { fontSize: 48 }
+      )
       .setOrigin(0.5)
-    addDummyDude.setInteractive().on('pointerdown', () => {
-      this.channel.emit('addDummy')
+    addDummyDude.setInteractive().on(events.POINTERDOWN, () => {
+      this.channel.emit(events.ADD_DUMMY)
     })
-
     const parseUpdates = updates => {
       if (typeof updates === undefined || updates === '') return []
-
       // parse
       let u = updates.split(',')
       u.pop()
-
       let u2 = []
-
       u.forEach((el, i) => {
         if (i % 4 === 0) {
           u2.push({
@@ -62,12 +67,10 @@ export default class GameScene extends Scene {
       })
       return u2
     }
-
     const updatesHandler = updates => {
       updates.forEach(gameObject => {
         const { playerId, x, y, dead } = gameObject
         const alpha = dead ? 0 : 1
-
         if (Object.keys(this.objects).includes(playerId)) {
           // if the gameObject does already exist,
           // update the gameObject
@@ -86,13 +89,11 @@ export default class GameScene extends Scene {
         }
       })
     }
-
-    this.channel.on('updateObjects', updates => {
+    this.channel.on(events.UPDATE_OBJECTS, updates => {
       let parsedUpdates = parseUpdates(updates[0])
       updatesHandler(parsedUpdates)
     })
-
-    this.channel.on('removePlayer', playerId => {
+    this.channel.on(events.REMOVE_PLAYER, playerId => {
       try {
         this.objects[playerId].sprite.destroy()
         delete this.objects[playerId]
@@ -100,19 +101,15 @@ export default class GameScene extends Scene {
         console.error(error.message)
       }
     })
-
     try {
       let res = await axios.get(`${location.protocol}//${location.hostname}:1444/getState`)
-
       let parsedUpdates = parseUpdates(res.data.state)
       updatesHandler(parsedUpdates)
-
-      this.channel.on('getId', playerId36 => {
+      this.channel.on(events.GET_ID, playerId36 => {
         this.playerId = parseInt(playerId36, 36)
-        this.channel.emit('addPlayer')
+        this.channel.emit(events.ADD_PLAYER)
       })
-
-      this.channel.emit('getId')
+      this.channel.emit(events.GET_ID)
     } catch (error) {
       console.error(error.message)
     }
