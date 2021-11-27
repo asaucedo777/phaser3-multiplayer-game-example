@@ -3,6 +3,8 @@ import { iceServers } from '@geckos.io/server'
 import pkg from 'phaser'
 const { Scene } = pkg
 import { Player } from './components/player.js'
+import { SERVER_EVENTS } from '../constants.js'
+
 export class GameScene extends Scene {
   constructor() {
     super({ key: 'GameScene' })
@@ -51,21 +53,21 @@ export class GameScene extends Scene {
             player.kill()
           }
         })
-        channel.room.emit('removePlayer', channel.playerId)
+        channel.room.emit(SERVER_EVENTS.REMOVE_PLAYER, channel.playerId)
       })
-      channel.on('addDummy', addDummy)
-      channel.on('getId', () => {
+      channel.on(SERVER_EVENTS.ADD_DUMMY, addDummy)
+      channel.on(SERVER_EVENTS.GET_ID, () => {
         channel.playerId = this.getId()
-        channel.emit('getId', channel.playerId.toString(36))
+        channel.emit(SERVER_EVENTS.GET_ID, channel.playerId.toString(36))
       })
-      channel.on('playerMove', data => {
+      channel.on(SERVER_EVENTS.PLAYER_MOVE, data => {
         this.playersGroup.children.iterate(player => {
           if (player.playerId === channel.playerId) {
             player.setMove(data)
           }
         })
       })
-      channel.on('addPlayer', data => {
+      channel.on(SERVER_EVENTS.ADD_PLAYER, data => {
         let dead = this.playersGroup.getFirstDead()
         if (dead) {
           dead.revive(channel.playerId, false)
@@ -73,7 +75,7 @@ export class GameScene extends Scene {
           this.playersGroup.add(new Player(this, channel.playerId, Phaser.Math.RND.integerInRange(100, 700)))
         }
       })
-      channel.emit('ready')
+      channel.emit(SERVER_EVENTS.READY)
     })
   }
   update() {
@@ -90,7 +92,7 @@ export class GameScene extends Scene {
       player.postUpdate()
     })
     if (updates.length > 0) {
-      this.io.room().emit('updateObjects', [updates])
+      this.io.room().emit(SERVER_EVENTS.UPDATE_OBJECTS, [updates])
     }
   }
 }

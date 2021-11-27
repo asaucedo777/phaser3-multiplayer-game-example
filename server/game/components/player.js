@@ -3,29 +3,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, '')
     scene.add.existing(this)
     scene.physics.add.existing(this)
-
     this.scene = scene
-
     this.prevX = -1
     this.prevY = -1
-
     this.dead = false
     this.prevDead = false
-
     this.playerId = playerId
     this.move = {}
-
     this.setDummy(dummy)
-
     this.body.setSize(32, 48)
-
     this.prevNoMovement = true
-
     this.setCollideWorldBounds(true)
-
     scene.events.on('update', this.update, this)
   }
-
   setDummy(dummy) {
     if (dummy) {
       this.body.setBounce(1)
@@ -37,12 +27,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.body.setBounce(0)
     }
   }
-
   kill() {
     this.dead = true
     this.setActive(false)
   }
-
   revive(playerId, dummy) {
     this.playerId = playerId
     this.dead = false
@@ -50,28 +38,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDummy(dummy)
     this.setVelocity(0)
   }
-
   setMove(data) {
     let int = parseInt(data, 36)
-
     let move = {
       left: int === 1 || int === 5,
       right: int === 2 || int === 6,
       up: int === 4 || int === 6 || int === 5,
       none: int === 8
     }
-
     this.move = move
   }
-
   update() {
     if (this.move.left) this.setVelocityX(-160)
     else if (this.move.right) this.setVelocityX(160)
     else this.setVelocityX(0)
-
     if (this.move.up && this.body.onFloor()) this.setVelocityY(-550)
   }
-
   postUpdate() {
     this.prevX = this.x
     this.prevY = this.y

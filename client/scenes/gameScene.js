@@ -4,15 +4,7 @@ import Player from '../components/player'
 import Cursors from '../components/cursors'
 import Controls from '../components/controls'
 import FullscreenButton from '../components/fullscreenButton'
-
-const events = {
-  POINTERDOWN: 'pointerdown',
-  UPDATE_OBJECTS: 'updateObjects',
-  REMOVE_PLAYER: 'removePlayer',
-  GET_ID: 'getId',
-  ADD_DUMMY: 'addDummy',
-  ADD_PLAYER: 'addPlayer',
-}
+import { CLIENT_EVENTS } from '../constants'
 
 export default class GameScene extends Scene {
   constructor() {
@@ -38,17 +30,16 @@ export default class GameScene extends Scene {
     new Cursors(this, this.channel)
     new Controls(this, this.channel)
     FullscreenButton(this)
-    let addDummyDude = this.add
-      .text(
-        this.cameras.main.width / 2, 
+    // añadir texto HAZ CLICK y listener
+    this.add
+      .text(this.cameras.main.width / 2, 
         this.cameras.main.height / 2 - 100, 
-        'HAZ CLICK', 
-        { fontSize: 48 }
-      )
+        'HAZ CLICK', { fontSize: 48 })
       .setOrigin(0.5)
-    addDummyDude.setInteractive().on(events.POINTERDOWN, () => {
-      this.channel.emit(events.ADD_DUMMY)
-    })
+      .setInteractive()
+      .on(CLIENT_EVENTS.POINTERDOWN, () => {
+        this.channel.emit(CLIENT_EVENTS.ADD_DUMMY)
+      })
     const parseUpdates = updates => {
       if (typeof updates === undefined || updates === '') return []
       // parse
@@ -89,11 +80,11 @@ export default class GameScene extends Scene {
         }
       })
     }
-    this.channel.on(events.UPDATE_OBJECTS, updates => {
+    this.channel.on(CLIENT_EVENTS.UPDATE_OBJECTS, updates => {
       let parsedUpdates = parseUpdates(updates[0])
       updatesHandler(parsedUpdates)
     })
-    this.channel.on(events.REMOVE_PLAYER, playerId => {
+    this.channel.on(CLIENT_EVENTS.REMOVE_PLAYER, playerId => {
       try {
         this.objects[playerId].sprite.destroy()
         delete this.objects[playerId]
@@ -105,11 +96,11 @@ export default class GameScene extends Scene {
       let res = await axios.get(`${location.protocol}//${location.hostname}:1444/getState`)
       let parsedUpdates = parseUpdates(res.data.state)
       updatesHandler(parsedUpdates)
-      this.channel.on(events.GET_ID, playerId36 => {
+      this.channel.on(CLIENT_EVENTS.GET_ID, playerId36 => {
         this.playerId = parseInt(playerId36, 36)
-        this.channel.emit(events.ADD_PLAYER)
+        this.channel.emit(CLIENT_EVENTS.ADD_PLAYER)
       })
-      this.channel.emit(events.GET_ID)
+      this.channel.emit(CLIENT_EVENTS.GET_ID)
     } catch (error) {
       console.error(error.message)
     }

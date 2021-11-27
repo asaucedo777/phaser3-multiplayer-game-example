@@ -1,3 +1,5 @@
+import { CLIENT_EVENTS } from '../constants.js'
+
 const FullscreenButton = scene => {
   let button = scene.add
     .image(scene.cameras.main.width - 20, 20, 'fullscreen', 0)
@@ -6,7 +8,7 @@ const FullscreenButton = scene => {
     .setScrollFactor(0)
     .setDepth(100)
     .setAlpha(0.2)
-  button.on('pointerup', () => {
+  button.on(CLIENT_EVENTS.POINTERUP, () => {
     if (scene.scale.isFullscreen) {
       button.setFrame(0)
       scene.scale.stopFullscreen()

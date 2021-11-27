@@ -1,8 +1,9 @@
+import { CLIENT_EVENTS } from '../constants.js'
 export default class Cursors {
   constructor(scene, channel) {
     this.channel = channel
     this.cursors = scene.input.keyboard.createCursorKeys()
-    scene.events.on('update', this.update, this)
+    scene.events.on(CLIENT_EVENTS.UPDATE, this.update, this)
   }
   update() {
     let move = {
@@ -28,7 +29,7 @@ export default class Cursors {
       if (move.right) total += 2
       if (move.up) total += 4
       let str36 = total.toString(36)
-      this.channel.emit('playerMove', str36)
+      this.channel.emit(CLIENT_EVENTS.PLAYER_MOVE, str36)
     }
     this.prevNoMovement = move.none
   }

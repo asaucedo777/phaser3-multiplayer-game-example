@@ -1,5 +1,7 @@
 import { Scene } from 'phaser'
 import geckos from '@geckos.io/client'
+import { CLIENT_EVENTS } from '../constants.js'
+
 export default class BootScene extends Scene {
   constructor() {
     super({ key: 'BootScene' })
@@ -7,7 +9,7 @@ export default class BootScene extends Scene {
     channel.onConnect(error => {
       if (error) console.error(error.message)
     })
-    channel.on('ready', () => {
+    channel.on(CLIENT_EVENTS.READY, () => {
       this.scene.start('GameScene', { channel: channel })
     })
   }

@@ -1,3 +1,5 @@
+import { CLIENT_EVENTS } from '../constants.js'
+
 export default class Controls {
   left = false
   right = false
@@ -32,14 +34,14 @@ export default class Controls {
         }
       }
     }
-    scene.input.on('gameobjectdown', (pointer, gameObject) => detectPointer(gameObject, true))
-    scene.input.on('gameobjectup', (pointer, gameObject) => detectPointer(gameObject, false))
+    scene.input.on(CLIENT_EVENTS.GAMEOBJECTDOWN, (pointer, gameObject) => detectPointer(gameObject, true))
+    scene.input.on(CLIENT_EVENTS.GAMEOBJECTUP, (pointer, gameObject) => detectPointer(gameObject, false))
     let left = new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI)
     let right = new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
     let up = new Control(scene, 0, 0, 'up')
     this.controls.push(left, right, up)
     this.resize()
-    this.scene.events.on('update', this.update, this)
+    this.scene.events.on(CLIENT_EVENTS.UPDATE, this.update, this)
   }
   controlsDown() {
     return { left: this.left, right: this.right, up: this.up, none: this.none }
@@ -70,7 +72,7 @@ export default class Controls {
       if (this.right) total += 2
       if (this.up) total += 4
       let str36 = total.toString(36)
-      this.channel.emit('playerMove', str36)
+      this.channel.emit(CLIENT_EVENTS.PLAYER_MOVE, str36)
     }
     this.prevNone = this.none
   }
