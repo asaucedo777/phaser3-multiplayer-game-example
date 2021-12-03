@@ -1,15 +1,10 @@
 export const SERVER_EVENTS = {
-  LOAD: 'load',
   READY: 'ready',
-  POINTERDOWN: 'pointerdown',
-  POINTERUP: 'pointerup',
+  UPDATE: 'update',
   UPDATE_OBJECTS: 'updateObjects',
   REMOVE_PLAYER: 'removePlayer',
   GET_ID: 'getId',
   ADD_DUMMY: 'addDummy',
   ADD_PLAYER: 'addPlayer',
-  GAMEOBJECTDOWN: 'gameobjectdown',
-  GAMEOBJECTUP: 'gameobjectup',
-  UPDATE: 'update',
   PLAYER_MOVE: 'playerMove',
 }

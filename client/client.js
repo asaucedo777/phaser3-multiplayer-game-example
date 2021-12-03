@@ -4,6 +4,8 @@ import Phaser, { Game } from 'phaser'
 import BootScene from './scenes/bootScene'
 import GameScene from './scenes/gameScene'
 import FullScreenEvent from './components/fullscreenEvent'
+import { CLIENT_EVENTS } from './constants'
+
 const config = {
   type: Phaser.AUTO,
   scale: {
@@ -14,7 +16,7 @@ const config = {
   },
   scene: [BootScene, GameScene]
 }
-window.addEventListener('load', () => {
+window.addEventListener(CLIENT_EVENTS.LOAD, () => {
   const game = new Game(config)
   FullScreenEvent(() => resize(game))
 })

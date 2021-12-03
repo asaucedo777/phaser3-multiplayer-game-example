@@ -3,9 +3,11 @@ import http from 'http'
 import cors from 'cors'
 import compression from 'compression'
 import path from 'path'
-import { PhaserGame } from './game/game.js'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
+
+import { PhaserGame } from './game/game.js'
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const app = express()

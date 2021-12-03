@@ -2,8 +2,9 @@ import geckos from '@geckos.io/server'
 import { iceServers } from '@geckos.io/server'
 import pkg from 'phaser'
 const { Scene } = pkg
+
 import { Player } from './components/player.js'
-import { SERVER_EVENTS } from '../constants.js'
+import { SERVER_EVENTS } from './../constantsServer.js'
 
 export class GameScene extends Scene {
   constructor() {
