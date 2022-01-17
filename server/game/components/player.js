@@ -15,6 +15,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.prevNoMovement = true
     this.setCollideWorldBounds(true)
     scene.events.on('update', this.update, this)
+    console.log('Player %d', this.playerId)
   }
   setDummy(dummy) {
     if (dummy) {
@@ -30,6 +31,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   kill() {
     this.dead = true
     this.setActive(false)
+    console.log('Player %d killed', this.playerId)
   }
   revive(playerId, dummy) {
     this.playerId = playerId
@@ -37,6 +39,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setActive(true)
     this.setDummy(dummy)
     this.setVelocity(0)
+    console.log('Player %d revived', this.playerId)
   }
   setMove(data) {
     let int = parseInt(data, 36)
@@ -47,16 +50,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       none: int === 8
     }
     this.move = move
+    // console.log('Player %d moved', this.playerId)
   }
   update() {
     if (this.move.left) this.setVelocityX(-160)
     else if (this.move.right) this.setVelocityX(160)
     else this.setVelocityX(0)
     if (this.move.up && this.body.onFloor()) this.setVelocityY(-550)
+    // console.log('Player %d updated', this.playerId)
   }
   postUpdate() {
     this.prevX = this.x
     this.prevY = this.y
     this.prevDead = this.dead
+    // console.log('Player %d postupdated', this.playerId)
   }
 }

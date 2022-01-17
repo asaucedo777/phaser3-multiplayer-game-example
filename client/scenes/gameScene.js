@@ -13,20 +13,23 @@ export default class GameScene extends Scene {
     this.playerId
   }
   init({ channel }) {
+    console.log('GameScene init')
     this.channel = channel
   }
   preload() {
+    console.log('GameScene preload')
     this.load.image('controls', 'assets/controls.png')
     this.load.spritesheet('fullscreen', 'assets/fullscreen.png', {
       frameWidth: 64,
-      frameHeight: 64
+      frameHeight: 64,
     })
     this.load.spritesheet('player', 'assets/player.png', {
       frameWidth: 32,
-      frameHeight: 48
+      frameHeight: 48,
     })
   }
   async create() {
+    console.log('GameScene create')
     new Cursors(this, this.channel)
     new Controls(this, this.channel)
     FullscreenButton(this)
@@ -39,11 +42,12 @@ export default class GameScene extends Scene {
       .setInteractive()
       .on(CLIENT_EVENTS.POINTERDOWN, () => {
         this.channel.emit(CLIENT_EVENTS.ADD_DUMMY)
+        console.log('GameScene create addDummy')
       })
     const parseUpdates = updates => {
       if (typeof updates === undefined || updates === '') return []
-      // parse
       let u = updates.split(',')
+      // delete last element
       u.pop()
       let u2 = []
       u.forEach((el, i) => {

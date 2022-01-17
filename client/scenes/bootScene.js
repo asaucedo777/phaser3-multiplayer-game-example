@@ -8,9 +8,11 @@ export default class BootScene extends Scene {
     const channel = geckos({ port: 1444 })
     channel.onConnect(error => {
       if (error) console.error(error.message)
+      console.log('BootScened connected')
     })
     channel.on(CLIENT_EVENTS.READY, () => {
       this.scene.start('GameScene', { channel: channel })
+      console.log('BootScened ready')
     })
   }
 }

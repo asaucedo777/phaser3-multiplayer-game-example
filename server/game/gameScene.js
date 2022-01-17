@@ -16,6 +16,7 @@ export class GameScene extends Scene {
       iceServers: process.env.NODE_ENV === 'production' ? iceServers : []
     })
     this.io.addServer(this.game.server)
+    console.log('Scene initialized')
   }
   getId() {
     return this.playerId++
@@ -34,18 +35,6 @@ export class GameScene extends Scene {
   }
   create() {
     this.playersGroup = this.add.group()
-    const addDummy = () => {
-      let x = Phaser.Math.RND.integerInRange(50, 800)
-      let y = Phaser.Math.RND.integerInRange(100, 400)
-      let id = Math.random()
-      let dead = this.playersGroup.getFirstDead()
-      if (dead) {
-        dead.revive(id, true)
-        dead.setPosition(x, y)
-      } else {
-        this.playersGroup.add(new Player(this, id, x, y, true))
-      }
-    }
     this.io.onConnection(channel => {
       channel.onDisconnect(() => {
         console.log('Disconnect user ' + channel.id)
@@ -55,11 +44,25 @@ export class GameScene extends Scene {
           }
         })
         channel.room.emit(SERVER_EVENTS.REMOVE_PLAYER, channel.playerId)
+        console.log('Scene create disconnect')
       })
-      channel.on(SERVER_EVENTS.ADD_DUMMY, addDummy)
+      channel.on(SERVER_EVENTS.ADD_DUMMY, () => {
+        let x = Phaser.Math.RND.integerInRange(50, 800)
+        let y = Phaser.Math.RND.integerInRange(100, 400)
+        let id = Math.random()
+        let dead = this.playersGroup.getFirstDead()
+        if (dead) {
+          dead.revive(id, true)
+          dead.setPosition(x, y)
+        } else {
+          this.playersGroup.add(new Player(this, id, x, y, true))
+        }
+        console.log('Scene create addDummy')
+      })
       channel.on(SERVER_EVENTS.GET_ID, () => {
         channel.playerId = this.getId()
         channel.emit(SERVER_EVENTS.GET_ID, channel.playerId.toString(36))
+        console.log('Scene create getId')
       })
       channel.on(SERVER_EVENTS.PLAYER_MOVE, data => {
         this.playersGroup.children.iterate(player => {
@@ -67,6 +70,7 @@ export class GameScene extends Scene {
             player.setMove(data)
           }
         })
+        // console.log('Scene create playerMove')
       })
       channel.on(SERVER_EVENTS.ADD_PLAYER, data => {
         let dead = this.playersGroup.getFirstDead()
@@ -75,8 +79,10 @@ export class GameScene extends Scene {
         } else {
           this.playersGroup.add(new Player(this, channel.playerId, Phaser.Math.RND.integerInRange(100, 700)))
         }
+        console.log('Scene create addPlayer')
       })
       channel.emit(SERVER_EVENTS.READY)
+      console.log('Scene create onConnection')
     })
   }
   update() {
@@ -95,5 +101,6 @@ export class GameScene extends Scene {
     if (updates.length > 0) {
       this.io.room().emit(SERVER_EVENTS.UPDATE_OBJECTS, [updates])
     }
+    //console.log('Scene update')
   }
 }

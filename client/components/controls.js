@@ -34,8 +34,12 @@ export default class Controls {
         }
       }
     }
-    scene.input.on(CLIENT_EVENTS.GAMEOBJECTDOWN, (pointer, gameObject) => detectPointer(gameObject, true))
-    scene.input.on(CLIENT_EVENTS.GAMEOBJECTUP, (pointer, gameObject) => detectPointer(gameObject, false))
+    scene.input.on(CLIENT_EVENTS.GAMEOBJECTDOWN, 
+      (pointer, gameObject) => detectPointer(gameObject, true)
+    )
+    scene.input.on(CLIENT_EVENTS.GAMEOBJECTUP, 
+      (pointer, gameObject) => detectPointer(gameObject, false)
+    )
     let left = new Control(scene, 0, 0, 'left').setRotation(-0.5 * Math.PI)
     let right = new Control(scene, 0, 0, 'right').setRotation(0.5 * Math.PI)
     let up = new Control(scene, 0, 0, 'up')

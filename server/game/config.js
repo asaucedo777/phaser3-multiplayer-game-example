@@ -9,7 +9,7 @@ export const config = {
   width: 896,
   height: 504,
   banner: false,
-  audio: false,
+  audio: true,
   scene: [GameScene],
   physics: {
     default: 'arcade',
